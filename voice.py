@@ -4,6 +4,7 @@ import tensorflow as tf
 
 path = "voice.csv"
 df = pd.read_csv(path)
+df = df.sample(frac=1)
 data = df.iloc[:, :-1].to_numpy()
 
 gender = df.label.tolist()
@@ -12,8 +13,9 @@ for pos in range(len(gender)):
     if gender[pos] == "female":
         label[pos] = 1
 
-train_data, test_data = data[:(data.shape[0]*8)//10], data[(data.shape[0]*8)//10:]
-train_label, test_label = label[:(data.shape[0]*8)//10], label[(data.shape[0]*8)//10:]
+r = (data.shape[0]*9)//10
+train_data, test_data = data[:r], data[r:]
+train_label, test_label = label[:r], label[r:]
 
 model = tf.keras.Sequential([
     tf.keras.layers.Dense(256, activation=tf.nn.relu),
