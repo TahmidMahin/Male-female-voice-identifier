@@ -1,11 +1,13 @@
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+from matplotlib import pyplot as plt
 
 path = "voice.csv"
 df = pd.read_csv(path)
 df = df.sample(frac=1)
 data = df.iloc[:, :-1].to_numpy()
+data = data*0.1
 
 gender = df.label.tolist()
 label = np.zeros(len(gender))
@@ -23,7 +25,8 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(1, activation=tf.nn.sigmoid)
 ])
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
-model.fit(train_data, train_label, epochs=50)
-print("test data accuracy:")
-model.evaluate(test_data, test_label)
+history = model.fit(train_data, train_label, epochs=100, validation_data=(test_data, test_label))
 
+pd.DataFrame(history.history).plot()
+plt.grid(True)
+plt.show()
